@@ -1,0 +1,222 @@
+﻿<!DOCTYPE html>
+<html lang=vi>
+<head>
+  <meta charset=UTF-8>
+  <meta name=viewport content=width=device-width, initial-scale=1.0>
+  <meta name=theme-color content=#559b8f>
+  <meta name=description content=Trang Quản lý Dịch vụ Y tế - Hệ thống Điều hướng Chăm sóc Sức khỏe CareRoute. Hỗ trợ cơ sở y tế quản lý danh mục, bảng giá và trạng thái dịch vụ.>
+  <title>Quản Lý Dịch Vụ Y Tế - CareRoute</title>
+  
+  <!-- CSS Stylesheet riêng biệt theo chuẩn cấu trúc dự án -->
+  <link rel=stylesheet href=css/style.css>
+</head>
+<body>
+  <div class=app>
+    <!-- 1. THANH ĐIỀU HƯỚNG BÊN HÔNG (SIDEBAR) -->
+    <aside class=sidebar aria-label=Điều hướng cơ sở y tế>
+      <a class=facility-brand href=index.html aria-label=Bệnh viện Đa khoa Tâm Anh - Trang chủ quản lý>
+        <span class=facility-logo>
+          <img class=icon src=assets/icons/hospital-svgrepo-com.svg alt=Biểu tượng bệnh viện>
+        </span>
+        <span class=facility-brand-text>
+          <span class=facility-name>BV Đa Khoa Tâm Anh</span>
+          <span class=facility-role>Quản trị viên</span>
+        </span>
+      </a>
+
+      <!-- Menu các phân hệ chính của cơ sở y tế -->
+      <nav class=nav-list aria-label=Menu chính>
+        <a class=nav-link href=# title=Bảng điều khiển tổng quan>
+          <img class=icon src=assets/icons/layout-grid-1-svgrepo-com.svg alt=Bảng điều khiển>
+          <span>Bảng điều khiển</span>
+        </a>
+        <a class=nav-link active href=index.html aria-current=page title=Quản lý danh mục dịch vụ>
+          <img class=icon src=assets/icons/briefcase-svgrepo-com.svg alt=Quản lý dịch vụ>
+          <span>Quản lý Dịch vụ</span>
+        </a>
+        <a class=nav-link href=# title=Quy trình hướng dẫn khám bệnh>
+          <img class=icon src=assets/icons/map-svgrepo-com.svg alt=Quy trình hướng dẫn>
+          <span>Quy trình hướng dẫn</span>
+        </a>
+        <a class=nav-link href=# title=Phản hồi & Đánh giá từ người bệnh>
+          <img class=icon src=assets/icons/message-circle-svgrepo-com.svg alt=Phản hồi>
+          <span>Phản hồi &amp; Đánh giá</span>
+        </a>
+      </nav>
+
+      <div class=sidebar-footer>
+        <a href=# title=Đăng xuất khỏi hệ thống>
+          <img class=icon src=assets/icons/user-svgrepo-com.svg alt=Đăng xuất>
+          <span>Đăng xuất</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- 2. KHU VỰC NỘI DUNG CHÍNH (MAIN) -->
+    <main class=main>
+      <!-- Tiêu đề trang & Nút thêm mới -->
+      <header class=page-header>
+        <div class=page-heading>
+          <h1>Quản Lý Dịch Vụ</h1>
+          <p>Quản lý danh mục, bảng giá và trạng thái các dịch vụ y tế của cơ sở khám chữa bệnh</p>
+        </div>
+        <button class=primary-button id=addServiceButton type=button aria-haspopup=dialog>
+          <span aria-hidden=true>+</span> Thêm dịch vụ mới
+        </button>
+      </header>
+
+      <!-- Khu vực nội dung: Thống kê, Bộ lọc & Bảng dữ liệu -->
+      <section class=content aria-label=Danh sách dịch vụ y tế>
+        <div class=summary-row>
+          <div class=summary-text>
+            <strong id=serviceCount>0 dịch vụ</strong> <span>đang hiển thị</span>
+          </div>
+
+          <!-- Bộ lọc và tìm kiếm -->
+          <div class=filters>
+            <!-- Ô tìm kiếm thời gian thực -->
+            <label class=search-wrap>
+              <span class=visually-hidden>Tìm kiếm dịch vụ</span>
+              <img class=icon src=assets/icons/list-svgrepo-com.svg alt=Tìm kiếm>
+              <input class=search-input id=searchInput type=search placeholder=Tìm kiếm dịch vụ... aria-label=Tìm kiếm dịch vụ theo tên hoặc mô tả>
+            </label>
+
+            <!-- Lọc theo danh mục -->
+            <label>
+              <span class=visually-hidden>Lọc theo danh mục</span>
+              <select class=filter-select id=categoryFilter aria-label=Lọc theo danh mục>
+                <option value=">Tất cả danh mục</option>
+ <option value=Chẩn đoán hình ảnh>Chẩn đoán hình ảnh</option>
+ <option value=Khám bệnh>Khám bệnh</option>
+ <option value=Xét nghiệm>Xét nghiệm</option>
+ <option value=Thăm dò chức năng>Thăm dò chức năng</option>
+ </select>
+ </label>
+
+ <!-- Lọc theo trạng thái hoạt động -->
+ <label>
+ <span class=visually-hidden>Lọc theo trạng thái</span>
+ <select class=filter-select id=statusFilter aria-label=Lọc theo trạng thái>
+ <option value=>Dịch vụ hiện tại (Tất cả)</option>
+ <option value=active>Đang hoạt động</option>
+ <option value=inactive>Tạm ngưng</option>
+ <option value=archived>Đã lưu trữ</option>
+ </select>
+ </label>
+ </div>
+ </div>
+
+ <!-- Bảng danh sách dịch vụ -->
+ <div class=table-card>
+ <div class=table-scroll>
+ <table class=service-table>
+ <thead>
+ <tr>
+ <th scope=col>TÊN DỊCH VỤ</th>
+ <th scope=col>DANH MỤC</th>
+ <th scope=col>GIÁ DỊCH VỤ</th>
+ <th scope=col>THỜI LƯỢNG</th>
+ <th scope=col>TRẠNG THÁI</th>
+ <th scope=col style=text-align: right;>THAO TÁC</th>
+ </tr>
+ </thead>
+ <tbody id=serviceRows>
+ <!-- Dữ liệu hàng sẽ được JS render tại đây -->
+ </tbody>
+ </table>
+ </div>
+
+ <!-- Trạng thái trống khi không tìm thấy kết quả -->
+ <div class=empty-state id=emptyState hidden>
+ <strong>Không tìm thấy dịch vụ nào</strong>
+ <span>Vui lòng thử thay đổi từ khóa tìm kiếm hoặc điều chỉnh bộ lọc danh mục/trạng thái.</span>
+ </div>
+ </div>
+ </section>
+ </main>
+ </div>
+
+ <!-- 3. HỘP THOẠI MODAL (THÊM / CHỈNH SỬA DỊCH VỤ) -->
+ <div class=modal-backdrop id=modalBackdrop hidden>
+ <section class=modal role=dialog aria-modal=true aria-labelledby=modalTitle aria-describedby=modalDescription>
+ <header class=modal-header>
+ <div>
+ <h2 id=modalTitle>Thêm Dịch Vụ Mới</h2>
+ <p id=modalDescription>Điền thông tin để thêm dịch vụ vào danh sách của cơ sở.</p>
+ </div>
+ <button class=close-button id=closeModalButton type=button aria-label=Đóng hộp thoại>&times;</button>
+ </header>
+
+ <form class=modal-form id=serviceForm novalidate>
+ <input id=serviceId type=hidden>
+
+ <!-- Tên dịch vụ -->
+ <div class=form-field>
+ <label for=serviceName>Tên dịch vụ <span class=required aria-hidden=true>*</span></label>
+ <input class=field-control id=serviceName name=serviceName type=text maxlength=120 placeholder=Ví dụ: Chụp CT Scanner lồng ngực required autocomplete=off>
+ <span class=field-error id=nameError aria-live=polite></span>
+ </div>
+
+ <!-- Danh mục & Giá dịch vụ -->
+ <div class=form-grid>
+ <div class=form-field>
+ <label for=serviceCategory>Danh mục <span class=required aria-hidden=true>*</span></label>
+ <select class=field-control id=serviceCategory name=serviceCategory required>
+ <option value=>-- Chọn danh mục --</option>
+ <option value=Chẩn đoán hình ảnh>Chẩn đoán hình ảnh</option>
+ <option value=Khám bệnh>Khám bệnh</option>
+ <option value=Xét nghiệm>Xét nghiệm</option>
+ <option value=Thăm dò chức năng>Thăm dò chức năng</option>
+ </select>
+ <span class=field-error id=categoryError aria-live=polite></span>
+ </div>
+
+ <div class=form-field>
+ <label for=servicePrice>Giá dịch vụ (VNĐ) <span class=required aria-hidden=true>*</span></label>
+ <input class=field-control id=servicePrice name=servicePrice type=number min=1 step=1000 inputmode=numeric placeholder=Ví dụ: 500000 required>
+ <span class=field-error id=priceError aria-live=polite></span>
+ </div>
+ </div>
+
+ <!-- Thời lượng & Trạng thái -->
+ <div class=form-grid>
+ <div class=form-field>
+ <label for=serviceDuration>Thời lượng dự kiến (phút)</label>
+ <input class=field-control id=serviceDuration name=serviceDuration type=number min=1 max=1440 step=1 inputmode=numeric placeholder=Ví dụ: 30>
+ <span class=field-error id=durationError aria-live=polite></span>
+ </div>
+
+ <div class=form-field>
+ <label for=serviceStatus>Trạng thái dịch vụ</label>
+ <select class=field-control id=serviceStatus name=serviceStatus>
+ <option value=active>Đang hoạt động</option>
+ <option value=inactive>Tạm ngưng</option>
+ </select>
+ </div>
+ </div>
+
+ <!-- Mô tả chi tiết -->
+ <div class=form-field>
+ <label for=serviceDescription>Mô tả dịch vụ</label>
+ <textarea class=field-control id=serviceDescription name=serviceDescription maxlength=300 placeholder=Nhập mô tả ngắn về quy trình, lưu ý hoặc đối tượng chỉ định...></textarea>
+ </div>
+
+ <!-- Các nút thao tác Modal -->
+ <div class=modal-actions>
+ <button class=secondary-button id=cancelModalButton type=button>Hủy bỏ</button>
+ <button class=primary-button id=saveServiceButton type=submit>Lưu dịch vụ</button>
+ </div>
+ </form>
+ </section>
+ </div>
+
+ <!-- 4. THÔNG BÁO TOAST POPUP -->
+ <div class=toast id=toast role=status aria-live=polite>
+ <strong id=toastTitle>Thông báo</strong>
+ <span id=toastMessage>Nội dung thông báo</span>
+ </div>
+
+ <!-- File JavaScript riêng biệt xử lý toàn bộ logic tương tác -->
+ <script src=js/main.js></script>
+</body>
+</html>
