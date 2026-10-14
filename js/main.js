@@ -1,536 +1,235 @@
-﻿/**
- * ==========================================================================
- * DỰ ÁN: CareRoute - Quản Lý Dịch Vụ Cơ Sở Y Tế (Facility Service Management)
- * HỌC PHẦN: Phát triển ứng dụng Web cơ bản - CSE122
- * BÀI KIỂM TRA GIỮA KỲ
- * Tệp: js/main.js
- * ==========================================================================
+/**
+ * CareRoute - Main UI & Global Interaction Controller
+ * Hệ thống điều phối giao diện, chuyển đổi vai trò, thông báo Toast, Modal và Header/Sidebar
  */
 
-(() => {
-  use strict;
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. Khởi tạo Lucide Icons nếu có thư viện
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
 
-  // --- 1. CẤU HÌNH VÀ DỮ LIỆU MẪU BAN ĐẦU ---
-  const STORAGE_KEY = careroute.facility.services.v1;
+  // 2. Gắn Thanh điều hướng nhanh vai trò (Role Switcher Floating Widget)
+  renderRoleSwitcher();
 
-  const initialServices = [
-    {
-      id: svc-mri,
-      name: Chụp sọ não MRI,
-      category: Chẩn đoán hình ảnh,
-      price: 2500000,
-      duration: 45,
-      status: active,
-      archived: false,
-      description: Chụp cộng hưởng từ sọ não độ phân giải cao phát hiện sớm tổn thương thần kinh.
-    },
-    {
-      id: svc-general,
-      name: Khám sức khỏe tổng quát,
-      category: Khám bệnh,
-      price: 1200000,
-      duration: 60,
-      status: active,
-      archived: false,
-      description: Gói khám tổng quát định kỳ toàn diện dành cho người trưởng thành.
-    },
-    {
-      id: svc-blood,
-      name: Xét nghiệm máu cơ bản,
-      category: Xét nghiệm,
-      price: 350000,
-      duration: 20,
-      status: active,
-      archived: false,
-      description: Đánh giá công thức máu 18 chỉ số, đường huyết và chức năng gan thận.
-    },
-    {
-      id: svc-ultrasound,
-      name: Siêu âm ổ bụng,
-      category: Chẩn đoán hình ảnh,
-      price: 450000,
-      duration: 30,
-      status: inactive,
-      archived: false,
-      description: Siêu âm kiểm tra màu Doppler đánh giá các cơ quan nội tạng ổ bụng.
-    },
-    {
-      id: svc-ecg,
-      name: Điện tâm đồ (ECG),
-      category: Thăm dò chức năng,
-      price: 180000,
-      duration: 15,
-      status: active,
-      archived: false,
-      description: Ghi điện tâm đồ 12 chuyển đạo tầm soát rối loạn nhịp tim.
+  // 3. Xử lý Sidebar Toggle trên mobile/tablet
+  initMobileSidebar();
+
+  // 4. Highlight Menu hiện tại
+  highlightActiveMenu();
+});
+
+/**
+ * Hiển thị thông báo Toast đẹp mắt
+ */
+function showToast(message, type = 'success', duration = 3500) {
+  let container = document.getElementById('careroute-toast-container');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'careroute-toast-container';
+    container.className = 'fixed bottom-5 right-5 z-50 flex flex-col gap-2.5 max-w-sm pointer-events-none';
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement('div');
+  toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium shadow-xl border backdrop-blur-md transition-all duration-300 transform translate-y-4 opacity-0`;
+
+  let bgClass = 'bg-white text-slate-800 border-slate-200';
+  let iconHtml = '<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-600 shrink-0"></i>';
+
+  if (type === 'success') {
+    bgClass = 'bg-emerald-900/90 text-white border-emerald-700/50 shadow-emerald-950/20';
+    iconHtml = '<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400 shrink-0"></i>';
+  } else if (type === 'warning') {
+    bgClass = 'bg-amber-900/90 text-white border-amber-700/50 shadow-amber-950/20';
+    iconHtml = '<i data-lucide="alert-triangle" class="w-5 h-5 text-amber-400 shrink-0"></i>';
+  } else if (type === 'error') {
+    bgClass = 'bg-rose-900/90 text-white border-rose-700/50 shadow-rose-950/20';
+    iconHtml = '<i data-lucide="x-circle" class="w-5 h-5 text-rose-400 shrink-0"></i>';
+  } else if (type === 'info') {
+    bgClass = 'bg-slate-900/90 text-white border-slate-700/50 shadow-slate-950/20';
+    iconHtml = '<i data-lucide="info" class="w-5 h-5 text-teal-400 shrink-0"></i>';
+  }
+
+  toast.className += ` ${bgClass}`;
+  toast.innerHTML = `
+    ${iconHtml}
+    <div class="flex-1 leading-snug">${message}</div>
+    <button onclick="this.parentElement.remove()" class="text-white/60 hover:text-white p-1 ml-1 rounded-lg">
+      <i data-lucide="x" class="w-4 h-4"></i>
+    </button>
+  `;
+
+  container.appendChild(toast);
+  if (window.lucide) window.lucide.createIcons();
+
+  // Trigger animation
+  requestAnimationFrame(() => {
+    toast.classList.remove('translate-y-4', 'opacity-0');
+    toast.classList.add('translate-y-0', 'opacity-100');
+  });
+
+  setTimeout(() => {
+    toast.classList.add('opacity-0', 'translate-y-2');
+    setTimeout(() => toast.remove(), 300);
+  }, duration);
+}
+
+/**
+ * Điều khiển Modal mở / đóng
+ */
+function openModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    document.body.classList.add('overflow-hidden');
+    if (window.lucide) window.lucide.createIcons();
+  }
+}
+
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.classList.remove('overflow-hidden');
+  }
+}
+
+/**
+ * Thanh chuyển đổi vai trò (Role Switcher) nhanh
+ */
+function renderRoleSwitcher() {
+  if (document.getElementById('role-switcher-btn')) return;
+
+  const currentPath = window.location.pathname;
+
+  const widget = document.createElement('div');
+  widget.id = 'role-switcher-container';
+  widget.className = 'fixed bottom-6 left-6 z-50';
+
+  widget.innerHTML = `
+    <div class="relative group">
+      <!-- Main Trigger Button -->
+      <button id="role-switcher-btn" class="flex items-center gap-2.5 px-4 py-2.5 bg-slate-900/90 text-white hover:bg-slate-900 rounded-full shadow-2xl border border-slate-700/60 backdrop-blur-md text-xs font-semibold tracking-wide transition-all transform hover:scale-105">
+        <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>Chuyển Vai Trò</span>
+        <i data-lucide="chevron-up" class="w-3.5 h-3.5 transition-transform group-hover:-rotate-180"></i>
+      </button>
+
+      <!-- Dropdown Menu -->
+      <div class="absolute bottom-full left-0 mb-3 w-72 bg-white/95 backdrop-blur-md rounded-2xl shadow-2xl border border-slate-200 p-2.5 hidden group-hover:block transition-all">
+        <div class="px-3 py-2 border-b border-slate-100 mb-1.5 flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-800 uppercase tracking-wider">Hệ thống CareRoute</span>
+          <span class="text-[10px] bg-emerald-100 text-emerald-700 font-bold px-1.5 py-0.5 rounded">4 Vai Trò</span>
+        </div>
+
+        <div class="space-y-1">
+          <!-- Hub -->
+          <a href="../index.html" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 hover:bg-slate-100 transition-colors">
+            <div class="w-6 h-6 rounded-lg bg-teal-100 text-teal-700 flex items-center justify-center font-bold">🏠</div>
+            <div class="flex-1">
+              <p class="font-semibold text-slate-900">Trang Chủ Tổng Hợp</p>
+              <p class="text-[10px] text-slate-500">Cổng kết nối toàn bộ hệ thống</p>
+            </div>
+          </a>
+
+          <!-- Role 1: Citizen -->
+          <div class="pt-1 border-t border-slate-100">
+            <p class="text-[10px] font-bold text-slate-400 px-3 py-1 uppercase">1. Người Dân (Citizen)</p>
+            <a href="citizen-care-search.html" class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs text-slate-700 hover:bg-emerald-50 hover:text-emerald-700">
+              <i data-lucide="search" class="w-4 h-4 text-emerald-600"></i> Tra cứu & AI-1 Router
+            </a>
+            <a href="citizen-care-detail.html" class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs text-slate-700 hover:bg-emerald-50 hover:text-emerald-700">
+              <i data-lucide="building-2" class="w-4 h-4 text-emerald-600"></i> Chi tiết cơ sở & dịch vụ
+            </a>
+            <a href="citizen-care-checklist.html" class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs text-slate-700 hover:bg-emerald-50 hover:text-emerald-700">
+              <i data-lucide="check-square" class="w-4 h-4 text-emerald-600"></i> AI-2 Lập Checklist chuẩn bị
+            </a>
+          </div>
+
+          <!-- Role 2: Facility -->
+          <div class="pt-1 border-t border-slate-100">
+            <p class="text-[10px] font-bold text-slate-400 px-3 py-1 uppercase">2. Cơ Sở Y Tế (Facility)</p>
+            <a href="facility-dashboard.html" class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs text-slate-700 hover:bg-teal-50 hover:text-teal-700">
+              <i data-lucide="layout-dashboard" class="w-4 h-4 text-teal-600"></i> Bảng điều khiển CSYT
+            </a>
+            <a href="facility-service-management.html" class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs text-slate-700 hover:bg-teal-50 hover:text-teal-700">
+              <i data-lucide="stethoscope" class="w-4 h-4 text-teal-600"></i> Quản lý dịch vụ (CRUD)
+            </a>
+            <a href="facility-guidance-management.html" class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs text-slate-700 hover:bg-teal-50 hover:text-teal-700">
+              <i data-lucide="map" class="w-4 h-4 text-teal-600"></i> Quy trình hướng dẫn khám
+            </a>
+          </div>
+
+          <!-- Role 3: Reviewer -->
+          <div class="pt-1 border-t border-slate-100">
+            <p class="text-[10px] font-bold text-slate-400 px-3 py-1 uppercase">3. Biên Tập Viên (Reviewer)</p>
+            <a href="reviewer-review-queue.html" class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs text-slate-700 hover:bg-amber-50 hover:text-amber-700">
+              <i data-lucide="list-checks" class="w-4 h-4 text-amber-600"></i> Hàng chờ duyệt nội dung
+            </a>
+            <a href="reviewer-feedback-review.html" class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs text-slate-700 hover:bg-amber-50 hover:text-amber-700">
+              <i data-lucide="message-square-diff" class="w-4 h-4 text-amber-600"></i> Đánh giá & Phản hồi
+            </a>
+            <a href="reviewer-freshness-monitor.html" class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs text-slate-700 hover:bg-amber-50 hover:text-amber-700">
+              <i data-lucide="sparkles" class="w-4 h-4 text-amber-600"></i> AI-3 Giám sát độ mới
+            </a>
+          </div>
+
+          <!-- Role 4: Admin -->
+          <div class="pt-1 border-t border-slate-100">
+            <p class="text-[10px] font-bold text-slate-400 px-3 py-1 uppercase">4. Quản Trị Viên (Admin)</p>
+            <a href="admin-dashboard.html" class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs text-slate-700 hover:bg-blue-50 hover:text-blue-700">
+              <i data-lucide="shield" class="w-4 h-4 text-blue-600"></i> Bảng điều khiển quản trị
+            </a>
+            <a href="admin-facility-management.html" class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs text-slate-700 hover:bg-blue-50 hover:text-blue-700">
+              <i data-lucide="building" class="w-4 h-4 text-blue-600"></i> Quản lý CSYT toàn quốc
+            </a>
+            <a href="admin-category-management.html" class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-xs text-slate-700 hover:bg-blue-50 hover:text-blue-700">
+              <i data-lucide="tags" class="w-4 h-4 text-blue-600"></i> Phân loại Taxonomy
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(widget);
+  if (window.lucide) window.lucide.createIcons();
+}
+
+/**
+ * Highlight link điều hướng đang xem
+ */
+function highlightActiveMenu() {
+  const currentFile = window.location.pathname.split('/').pop();
+  if (!currentFile) return;
+
+  const links = document.querySelectorAll('nav a, aside a');
+  links.forEach(link => {
+    const href = link.getAttribute('href');
+    if (href && href.endsWith(currentFile)) {
+      link.classList.add('bg-emerald-50', 'text-emerald-700', 'font-semibold');
     }
-  ];
+  });
+}
 
-  // --- 2. THAM CHIẾU CÁC PHẦN TỬ GIAO DIỆN (DOM Elements) ---
-  const backdrop = document.getElementById(modalBackdrop);
-  const modal = backdrop.querySelector(.modal);
-  const form = document.getElementById(serviceForm);
-  const nameInput = document.getElementById(serviceName);
-  const categoryInput = document.getElementById(serviceCategory);
-  const priceInput = document.getElementById(servicePrice);
-  const durationInput = document.getElementById(serviceDuration);
-  const statusInput = document.getElementById(serviceStatus);
-  const descriptionInput = document.getElementById(serviceDescription);
-
-  const searchInput = document.getElementById(searchInput);
-  const categoryFilter = document.getElementById(categoryFilter);
-  const statusFilter = document.getElementById(statusFilter);
-
-  const rowsContainer = document.getElementById(serviceRows);
-  const serviceCount = document.getElementById(serviceCount);
-  const emptyState = document.getElementById(emptyState);
-  const tableScroll = document.querySelector(.table-scroll);
-  const toast = document.getElementById(toast);
-
-  // Biến trạng thái nội bộ
-  let services = loadServices();
-  let toastTimer = null;
-  let previouslyFocused = null;
-
-  // --- 3. CÁC HÀM XỬ LÝ LƯU TRỮ (LocalStorage) ---
-
-  /**
-   * Tải danh sách dịch vụ từ LocalStorage. Nếu chưa có, sử dụng danh sách ban đầu.
-   */
-  function loadServices() {
-    try {
-      const saved = window.localStorage.getItem(STORAGE_KEY);
-      if (saved === null) {
-        return initialServices.map((item) => ({ ...item }));
-      }
-      const parsed = JSON.parse(saved);
-      if (!Array.isArray(parsed)) {
-        throw new Error(Dữ liệu dịch vụ đã lưu không phải mảng hợp lệ.);
-      }
-      return parsed.map((item) => ({
-        ...item,
-        archived: item.archived === true
-      }));
-    } catch (error) {
-      console.warn(Không thể tải dịch vụ từ localStorage. Sử dụng dữ liệu mẫu:, error);
-      return initialServices.map((item) => ({ ...item }));
-    }
+/**
+ * Mobile Sidebar Toggle
+ */
+function initMobileSidebar() {
+  const toggleBtn = document.getElementById('sidebarToggle') || document.getElementById('mobileMenuBtn');
+  const sidebar = document.getElementById('appSidebar') || document.querySelector('aside');
+  if (toggleBtn && sidebar) {
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('-translate-x-full');
+      sidebar.classList.toggle('translate-x-0');
+    });
   }
-
-  /**
-   * Lưu danh sách dịch vụ vào LocalStorage
-   */
-  function saveServices(nextServices) {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(nextServices));
-      return true;
-    } catch (error) {
-      console.error(Lỗi khi ghi dữ liệu vào LocalStorage:, error);
-      showToast(Không thể lưu dữ liệu, Bộ nhớ trình duyệt có thể đã bị đầy hoặc bị chặn quyền.);
-      return false;
-    }
-  }
-
-  // --- 4. CÁC HÀM TIỆN ÍCH HIỂN THỊ (Utilities) ---
-
-  /**
-   * Định dạng số tiền sang chuẩn Việt Nam Đồng (VD: 2.500.000 ₫)
-   */
-  function formatPrice(value) {
-    return new Intl.NumberFormat(vi-VN).format(value) +  ₫;
-  }
-
-  /**
-   * Hiển thị thông báo Toast góc màn hình
-   */
-  function showToast(title, message) {
-    document.getElementById(toastTitle).textContent = title;
-    document.getElementById(toastMessage).textContent = message;
-    toast.classList.add(visible);
-    window.clearTimeout(toastTimer);
-    toastTimer = window.setTimeout(() => {
-      toast.classList.remove(visible);
-    }, 3200);
-  }
-
-  /**
-   * Tạo nút thao tác (Sửa, Lưu trữ, Khôi phục)
-   */
-  function createActionButton(label, iconName, serviceId, action) {
-    const button = document.createElement(button);
-    button.className = icon-button;
-    if (action === archive) button.classList.add(archive);
-    button.type = button;
-    button.setAttribute(aria-label, ${label} dịch vụ);
-    button.title = ${label} dịch vụ;
-    button.dataset.action = action;
-    button.dataset.id = serviceId;
-
-    const icon = document.createElement(img);
-    icon.className = icon;
-    icon.src = ssets/icons/;
-    icon.alt = label;
-
-    button.appendChild(icon);
-    return button;
-  }
-
-  // --- 5. RENDER DỮ LIỆU & BỘ LỌC (Rendering & Filtering) ---
-
-  /**
-   * Dựng danh sách dịch vụ vào bảng theo từ khóa tìm kiếm và các tiêu chí lọc
-   */
-  function renderServices() {
-    const query = (searchInput.value || ").trim().toLocaleLowerCase(vi);
- const selectedCategory = categoryFilter.value;
- const selectedStatus = statusFilter.value;
-
- const filtered = services.filter((service) => {
- // 1. Lọc theo danh mục
- if (selectedCategory && service.category !== selectedCategory) {
- return false;
- }
-
- // 2. Lọc theo vòng đời/trạng thái
- if (selectedStatus === archived) {
- if (!service.archived) return false;
- } else {
- if (service.archived) return false;
- if (selectedStatus === active && service.status !== active) return false;
- if (selectedStatus === inactive && service.status !== inactive) return false;
- }
-
- // 3. Tìm kiếm theo từ khóa
- if (query) {
- const fullText = ${service.name} .toLocaleLowerCase(vi);
- if (!fullText.includes(query)) return false;
- }
-
- return true;
- });
-
- // Làm sạch bảng trước khi đổ dữ liệu mới
- rowsContainer.replaceChildren();
-
- // Render từng hàng
- filtered.forEach((service) => {
- const row = document.createElement(tr);
-
- // Cột 1: Tên dịch vụ & mô tả
- const nameCell = document.createElement(td);
- const name = document.createElement(span);
- name.className = service-title;
- name.textContent = service.name;
- nameCell.appendChild(name);
-
- if (service.description) {
- const desc = document.createElement(span);
- desc.className = service-description;
- desc.textContent = service.description;
- nameCell.appendChild(desc);
- }
-
- // Cột 2: Danh mục
- const categoryCell = document.createElement(td);
- categoryCell.className = category-label;
- categoryCell.textContent = service.category;
-
- // Cột 3: Giá dịch vụ
- const priceCell = document.createElement(td);
- priceCell.className = price;
- priceCell.textContent = formatPrice(service.price);
-
- // Cột 4: Thời lượng
- const durationCell = document.createElement(td);
- durationCell.textContent = service.duration ? ${service.duration} phút : —;
-
- // Cột 5: Trạng thái (Active / Inactive / Archived)
- const statusCell = document.createElement(td);
- const statusBadge = document.createElement(span);
- const isInactive = service.archived || service.status === inactive;
- statusBadge.className = status;
- statusBadge.textContent = service.archived
- ? Đã lưu trữ
- : service.status === inactive
- ? Tạm ngưng
- : Đang hoạt động;
- statusCell.appendChild(statusBadge);
-
- // Cột 6: Các nút thao tác
- const actionsCell = document.createElement(td);
- const actionsWrap = document.createElement(div);
- actionsWrap.className = row-actions;
-
- if (service.archived) {
- actionsWrap.appendChild(
- createActionButton(Khôi phục, check-circle-svgrepo-com.svg, service.id, restore)
- );
- } else {
- actionsWrap.appendChild(
- createActionButton(Sửa, edit-square-svgrepo-com.svg, service.id, edit)
- );
- actionsWrap.appendChild(
- createActionButton(Lưu trữ, folder-open-svgrepo-com.svg, service.id, archive)
- );
- }
- actionsCell.appendChild(actionsWrap);
-
- row.append(nameCell, categoryCell, priceCell, durationCell, statusCell, actionsCell);
- rowsContainer.appendChild(row);
- });
-
- // Cập nhật thống kê & trạng thái rỗng
- serviceCount.textContent = ${filtered.length} dịch vụ;
- if (filtered.length === 0) {
- emptyState.hidden = false;
- tableScroll.hidden = true;
- } else {
- emptyState.hidden = true;
- tableScroll.hidden = false;
- }
- }
-
- // --- 6. KIỂM TRA HỢP LỆ FORM (Form Validation) ---
-
- function setFieldError(input, errorElement, message) {
- if (errorElement) errorElement.textContent = message;
- if (message) {
- input.classList.add(invalid);
- input.setAttribute(aria-invalid, true);
- } else {
- input.classList.remove(invalid);
- input.removeAttribute(aria-invalid);
- }
- }
-
- function clearErrors() {
- setFieldError(nameInput, document.getElementById(nameError), );
- setFieldError(categoryInput, document.getElementById(categoryError), );
- setFieldError(priceInput, document.getElementById(priceError), );
- setFieldError(durationInput, document.getElementById(durationError), );
- }
-
- function validateForm() {
- let isValid = true;
- const nameVal = nameInput.value.trim();
- const priceVal = Number(priceInput.value);
- const durationVal = durationInput.value ===  ? null : Number(durationInput.value);
-
- // Kiểm tra tên dịch vụ
- if (!nameVal) {
- setFieldError(nameInput, document.getElementById(nameError), Vui lòng nhập tên dịch vụ.);
- isValid = false;
- } else {
- setFieldError(nameInput, document.getElementById(nameError), );
- }
-
- // Kiểm tra danh mục
- if (!categoryInput.value) {
- setFieldError(categoryInput, document.getElementById(categoryError), Vui lòng chọn danh mục.);
- isValid = false;
- } else {
- setFieldError(categoryInput, document.getElementById(categoryError), );
- }
-
- // Kiểm tra giá dịch vụ
- if (!priceInput.value || !Number.isSafeInteger(priceVal) || priceVal <= 0) {
- setFieldError(priceInput, document.getElementById(priceError), Giá dịch vụ phải là số nguyên lớn hơn 0.);
- isValid = false;
- } else {
- setFieldError(priceInput, document.getElementById(priceError), );
- }
-
- // Kiểm tra thời lượng
- if (durationVal !== null && (!Number.isInteger(durationVal) || durationVal < 1 || durationVal > 1440)) {
- setFieldError(durationInput, document.getElementById(durationError), Thời lượng phải từ 1 đến 1440 phút.);
- isValid = false;
- } else {
- setFieldError(durationInput, document.getElementById(durationError), );
- }
-
- if (!isValid) {
- const firstInvalid = form.querySelector('[aria-invalid=true]');
- if (firstInvalid) firstInvalid.focus();
- }
-
- return isValid;
- }
-
- // --- 7. QUẢN LÝ MODAL (Open / Close Modal) ---
-
- function openModal(service = null) {
- previouslyFocused = document.activeElement;
- clearErrors();
- form.reset();
-
- const isEdit = Boolean(service);
- document.getElementById(serviceId).value = isEdit ? service.id : ;
- document.getElementById(modalTitle).textContent = isEdit ? Chỉnh Sửa Dịch Vụ : Thêm Dịch Vụ Mới;
- document.getElementById(modalDescription).textContent = isEdit
- ? Cập nhật các thông tin của dịch vụ y tế.
- : Điền thông tin để thêm dịch vụ mới vào danh sách cơ sở.;
- document.getElementById(saveServiceButton).textContent = isEdit ? Lưu thay đổi : Lưu dịch vụ;
-
- if (isEdit) {
- nameInput.value = service.name;
- categoryInput.value = service.category;
- priceInput.value = String(service.price);
- durationInput.value = service.duration ? String(service.duration) : ;
- statusInput.value = service.status;
- descriptionInput.value = service.description || ;
- } else {
- statusInput.value = active;
- }
-
- backdrop.hidden = false;
- document.body.style.overflow = hidden;
- nameInput.focus();
- }
-
- function closeModal() {
- backdrop.hidden = true;
- document.body.style.overflow = ;
- clearErrors();
- if (previouslyFocused && typeof previouslyFocused.focus === function) {
- previouslyFocused.focus();
- }
- }
-
- // --- 8. LẮNG NGHE SỰ KIỆN (Event Listeners) ---
-
- // Mở modal thêm dịch vụ mới
- document.getElementById(addServiceButton).addEventListener(click, () => openModal(null));
-
- // Đóng modal
- document.getElementById(closeModalButton).addEventListener(click, closeModal);
- document.getElementById(cancelModalButton).addEventListener(click, closeModal);
- backdrop.addEventListener(click, (event) => {
- if (event.target === backdrop) closeModal();
- });
-
- // Tìm kiếm và lọc theo thời gian thực
- searchInput.addEventListener(input, renderServices);
- categoryFilter.addEventListener(change, renderServices);
- statusFilter.addEventListener(change, renderServices);
-
- // Xóa cảnh báo lỗi khi người dùng đang nhập
- nameInput.addEventListener(input, () => {
- if (nameInput.value.trim()) setFieldError(nameInput, document.getElementById(nameError), );
- });
- priceInput.addEventListener(input, () => {
- const val = Number(priceInput.value);
- if (Number.isSafeInteger(val) && val > 0) {
- setFieldError(priceInput, document.getElementById(priceError), );
- }
- });
-
- // Đóng modal bằng phím ESC & quản lý focus Trap
- document.addEventListener(keydown, (event) => {
- if (backdrop.hidden) return;
-
- if (event.key === Escape) {
- closeModal();
- return;
- }
-
- // Focus Trap bên trong modal
- if (event.key === Tab) {
- const focusables = modal.querySelectorAll(
- 'button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled])'
- );
- if (focusables.length === 0) return;
- const first = focusables[0];
- const last = focusables[focusables.length - 1];
-
- if (event.shiftKey && document.activeElement === first) {
- event.preventDefault();
- last.focus();
- } else if (!event.shiftKey && document.activeElement === last) {
- event.preventDefault();
- first.focus();
- }
- }
- });
-
- // Thao tác sửa, lưu trữ, khôi phục trên danh sách dịch vụ (Event Delegation)
- rowsContainer.addEventListener(click, (event) => {
- const actionBtn = event.target.closest(button[data-action]);
- if (!actionBtn) return;
-
- const serviceId = actionBtn.dataset.id;
- const action = actionBtn.dataset.action;
- const service = services.find((item) => item.id === serviceId);
-
- if (!service) {
- showToast(Không tìm thấy dịch vụ, Dữ liệu có thể đã được cập nhật trước đó.);
- return;
- }
-
- if (action === edit) {
- openModal(service);
- return;
- }
-
- if (action === archive || action === restore) {
- const isRestoring = action === restore;
- const actionName = isRestoring ? khôi phục : lưu trữ;
-
- if (!window.confirm(Bạn có chắc chắn muốn dịch vụ  không?)) {
- return;
- }
-
- const nextServices = services.map((item) =>
- item.id === service.id ? { ...item, archived: !isRestoring } : item
- );
-
- if (saveServices(nextServices)) {
- services = nextServices;
- renderServices();
- showToast(
- isRestoring ? Đã khôi phục dịch vụ : Đã lưu trữ dịch vụ,
- Dịch vụ  đã được thành công.
- );
- }
- }
- });
-
- // Xử lý gửi Form (Submit Form - Thêm mới hoặc Cập nhật)
- form.addEventListener(submit, (event) => {
- event.preventDefault();
- if (!validateForm()) return;
-
- const id = document.getElementById(serviceId).value;
- const existingIndex = services.findIndex((item) => item.id === id);
-
- const serviceData = {
- id: id || svc--,
- name: nameInput.value.trim(),
- category: categoryInput.value,
- price: Number(priceInput.value),
- duration: durationInput.value ? Number(durationInput.value) : null,
- status: statusInput.value,
- archived: false,
- description: descriptionInput.value.trim()
- };
-
- const nextServices = [...services];
- if (existingIndex >= 0) {
- nextServices[existingIndex] = serviceData;
- } else {
- nextServices.unshift(serviceData);
- }
-
- if (saveServices(nextServices)) {
- services = nextServices;
- renderServices();
- closeModal();
- showToast(
- existingIndex >= 0 ? Đã cập nhật dịch vụ : Đã thêm dịch vụ mới,
- Dịch vụ  đã được lưu thành công.
- );
- }
- });
-
- // --- 9. KHỞI TẠO TRANG BAN ĐẦU ---
- renderServices();
-})();
+}
+
+// Global helper exports
+window.showToast = showToast;
+window.openModal = openModal;
+window.closeModal = closeModal;

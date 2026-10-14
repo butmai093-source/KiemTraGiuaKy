@@ -4,35 +4,38 @@
 > **Đề tài BTL:** CareRoute - Điều hướng dịch vụ chăm sóc sức khỏe (BTL-03)  
 > **Trang thực hiện:** Quản lý Dịch vụ Cơ sở Y tế (Facility Service Management)  
 > **Sinh viên thực hiện:** SV2 (Phụ trách giao diện & nghiệp vụ Cơ sở y tế)  
-> **Họ và tên:** *(Điền họ và tên của bạn)*  
-> **Mã sinh viên:** *(Điền mã sinh viên của bạn)*  
-> **Lớp:** *(Điền mã lớp)*  
+> **Họ và tên:** _(Điền họ và tên của bạn)_  
+> **Mã sinh viên:** _(Điền mã sinh viên của bạn)_  
+> **Lớp:** _(Điền mã lớp)_
 
 ---
 
 ## 1. THÔNG TIN BÀI NỘP (3 LINK BẮT BUỘC)
 
-| STT | Nội dung | Đường dẫn (Link) |
-|:---:|---|---|
-| 1 | **Link Figma** | *[Điền link Figma thiết kế trang Quản lý Dịch vụ tại đây]* |
-| 2 | **Link GitHub cá nhân** | *[Điền link GitHub repository cá nhân tại đây]* |
-| 3 | **Link Video trình bày** | *[Điền link video YouTube/Drive theo chuẩn tại đây]* |
+| STT | Nội dung                                              | Đường dẫn (Link)                                                                                  |
+| :-: | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+|  1  | **Link Figma**                                        | https://www.figma.com/design/VQF430OptRQQVL2OvdsIwY/Untitled?node-id=0-1&p=f&t=lXfHw3kO2ex9AWPY-0 |
+|  2  | **Link GitHub cá nhân**                               | https://github.com/butmai093-source                                                               |
+|  3  | **Link Video trình bày** https://youtu.be/o9CfvkoFGuA |
 
 > **Quy chuẩn đặt tên video:**  
-> CSE122-GK-SV02-[HoVaTen]-FacilityServiceManagement  
-> *(Ví dụ: CSE122-GK-SV02-NguyenVanA-FacilityServiceManagement)*
+> CSE122-GK-SV02-[HoVaTen]-FacilityGuidanceManagement  
+> _(Ví dụ: CSE122-GK-SV02-NguyenVanA-FacilityGuidanceManagement)_
 
 ---
 
 ## 2. GIỚI THIỆU TRANG WEB
 
 ### 2.1. Tên trang
-**Quản Lý Dịch Vụ Cơ Sở Y Tế** (Facility Service Management - file index.html)
+
+**Quản Lý Dịch Vụ Cơ Sở Y Tế** (Facility Guidance Management - file index.html)
 
 ### 2.2. Đối tượng sử dụng
+
 Nhân viên quản trị, điều phối viên hoặc nhân sự phụ trách danh mục y tế tại các cơ sở khám chữa bệnh (bệnh viện, phòng khám, trung tâm y tế).
 
 ### 2.3. Mục đích của trang
+
 - Giúp cơ sở y tế quản lý minh bạch danh mục dịch vụ kỹ thuật, khám bệnh, xét nghiệm và chẩn đoán hình ảnh.
 - Hỗ trợ thiết lập giá dịch vụ niêm yết, thời lượng thực hiện dự kiến và mô tả chỉ định.
 - Cho phép bật/tắt trạng thái hoạt động hoặc lưu trữ dịch vụ để dữ liệu điều hướng của hệ thống **CareRoute** luôn chính xác, giúp người dân dễ dàng tra cứu trước khi đến khám.
@@ -85,15 +88,17 @@ Nhân viên quản trị, điều phối viên hoặc nhân sự phụ trách da
 
 - **HTML5:**
   - Cấu trúc chuẩn ngữ nghĩa Semantic Web (<aside>, <header>, <nav>, <main>, <section>, <table>, <form>).
-  - Đầy đủ thuộc tính trợ năng Accessibility: ria-label, ria-modal, ole=dialog, ria-live.
+  - Đầy đủ thuộc tính trợ năng Accessibility: ria-label, ria-modal,
+    ole=dialog, ria-live.
 - **CSS3:**
   - Hệ thống biến CSS (Design Tokens: màu sắc, typography, spacing, border-radius, shadows).
   - Bố cục hiện đại kết hợp linh hoạt giữa **CSS Flexbox** và **CSS Grid**.
-  - Hiệu ứng chuyển động mượt mà (	ransition, nimation cho modal, hover effects).
+  - Hiệu ứng chuyển động mượt mà ( ransition, nimation cho modal, hover effects).
   - **Responsive Design** tối ưu trên mọi độ phân giải: Desktop lớn (>1200px), Laptop/Tablet (860px), Điện thoại thông minh (dưới 640px).
 - **JavaScript (Vanilla JS ES6+):**
   - Mô hình IIFE đóng gói phạm vi tránh xung đột biến toàn cục (use strict).
-  - Thao tác DOM thuần (document.createElement, eplaceChildren, querySelector).
+  - Thao tác DOM thuần (document.createElement,
+    eplaceChildren, querySelector).
   - Quản lý sự kiện hiệu quả với Event Delegation.
   - Lưu trữ dữ liệu phía client với window.localStorage.
   - Định dạng tiền tệ với Intl.NumberFormat(vi-VN).
@@ -130,21 +135,23 @@ KiemTraGiuaKy/
 
 ## 7. GỢI Ý KỊCH BẢN QUAY VIDEO TRÌNH BÀY (03 PHÚT)
 
-| Thời lượng | Phân đoạn | Nội dung cần nói và thao tác |
-|---|---|---|
-| **00:00 - 00:30** *(30s)* | **1. Giới thiệu** | - Chào thầy/cô, giới thiệu bản thân (Họ tên, MSSV, vai trò SV2 trong nhóm đề tài CareRoute).<br>- Giới thiệu tên trang: *Quản lý Dịch vụ Cơ sở Y tế*.<br>- Mục đích: Giúp nhân viên y tế cập nhật giá, trạng thái, danh mục dịch vụ chính xác cho người dân tra cứu. |
-| **00:30 - 01:00** *(30s)* | **2. Figma** | - Mở giao diện Figma thiết kế trang Quản lý Dịch vụ.<br>- Giới thiệu bố cục: Sidebar điều hướng bên trái, Header trên cùng, Bộ lọc tìm kiếm và bảng danh sách dịch vụ kèm Modal thêm/sửa.<br>- Cho thấy phương án responsive trên màn hình nhỏ. |
-| **01:00 - 01:30** *(30s)* | **3. So khớp sản phẩm** | - Mở trang web index.html đang chạy trên trình duyệt.<br>- Đối chiếu giao diện thực tế với bản vẽ Figma (màu sắc tone xanh y tế #559b8f, font chữ Be Vietnam Pro, độ sắc nét của icon và bố cục card). |
-| **01:30 - 02:30** *(60s)* | **4. Giới thiệu mã nguồn** | - Mở VS Code:<br>  + **HTML:** Chỉ ra các thẻ semantic <aside>, <nav>, <main>, <header>, <table>, <form>, <dialog> modal.<br>  + **CSS:** Chỉ ra việc tổ chức CSS tokens, Flexbox/Grid và các khối @media xử lý Responsive.<br>  + **JS:** Chỉ ra mảng dữ liệu services, các hàm enderServices(), alidateForm(), và cơ chế lưu trữ localStorage. |
-| **02:30 - 03:00** *(30s)* | **5. Trình diễn (Demo)** | - Thực hiện trực tiếp trên trình duyệt:<br>  1. Gõ tìm kiếm dịch vụ MRI hoặc Khám.<br>  2. Lọc theo danh mục Xét nghiệm.<br>  3. Nhấn + Thêm dịch vụ mới, cố tình để trống để xem báo lỗi Validation.<br>  4. Điền đầy đủ dữ liệu -> Nhấn Lưu -> Toast thông báo thành công và dữ liệu xuất hiện ngay trên đầu bảng. |
+| Thời lượng                                                      | Phân đoạn                  | Nội dung cần nói và thao tác                                                                                                                                                                                                                                                                                     |
+| --------------------------------------------------------------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **00:00 - 00:30** _(30s)_                                       | **1. Giới thiệu**          | - Chào thầy/cô, giới thiệu bản thân (Họ tên, MSSV, vai trò SV2 trong nhóm đề tài CareRoute).<br>- Giới thiệu tên trang: _Quản lý Dịch vụ Cơ sở Y tế_.<br>- Mục đích: Giúp nhân viên y tế cập nhật giá, trạng thái, danh mục dịch vụ chính xác cho người dân tra cứu.                                             |
+| **00:30 - 01:00** _(30s)_                                       | **2. Figma**               | - Mở giao diện Figma thiết kế trang Quản lý Dịch vụ.<br>- Giới thiệu bố cục: Sidebar điều hướng bên trái, Header trên cùng, Bộ lọc tìm kiếm và bảng danh sách dịch vụ kèm Modal thêm/sửa.<br>- Cho thấy phương án responsive trên màn hình nhỏ.                                                                  |
+| **01:00 - 01:30** _(30s)_                                       | **3. So khớp sản phẩm**    | - Mở trang web index.html đang chạy trên trình duyệt.<br>- Đối chiếu giao diện thực tế với bản vẽ Figma (màu sắc tone xanh y tế #559b8f, font chữ Be Vietnam Pro, độ sắc nét của icon và bố cục card).                                                                                                           |
+| **01:30 - 02:30** _(60s)_                                       | **4. Giới thiệu mã nguồn** | - Mở VS Code:<br> + **HTML:** Chỉ ra các thẻ semantic <aside>, <nav>, <main>, <header>, <table>, <form>, <dialog> modal.<br> + **CSS:** Chỉ ra việc tổ chức CSS tokens, Flexbox/Grid và các khối @media xử lý Responsive.<br> + **JS:** Chỉ ra mảng dữ liệu services, các hàm                                    |
+| enderServices(), alidateForm(), và cơ chế lưu trữ localStorage. |
+| **02:30 - 03:00** _(30s)_                                       | **5. Trình diễn (Demo)**   | - Thực hiện trực tiếp trên trình duyệt:<br> 1. Gõ tìm kiếm dịch vụ MRI hoặc Khám.<br> 2. Lọc theo danh mục Xét nghiệm.<br> 3. Nhấn + Thêm dịch vụ mới, cố tình để trống để xem báo lỗi Validation.<br> 4. Điền đầy đủ dữ liệu -> Nhấn Lưu -> Toast thông báo thành công và dữ liệu xuất hiện ngay trên đầu bảng. |
 
 ---
 
 ## 8. CÂU HỎI VẤN ĐÁP THƯỜNG GẶP & CÂU TRẢ LỜI NHANH
 
-- **Q1: Vì sao lại dùng eplaceChildren() hoặc createElement() thay vì gán toàn bộ innerHTML?**  
-  *Trả lời:* Dùng DOM API giúp chống tấn công XSS (Cross-Site Scripting) khi chèn dữ liệu text từ người dùng, đồng thời tối ưu hiệu năng và dễ gắn event listeners.
+- **Q1: Vì sao lại dùng
+  eplaceChildren() hoặc createElement() thay vì gán toàn bộ innerHTML?**  
+   _Trả lời:_ Dùng DOM API giúp chống tấn công XSS (Cross-Site Scripting) khi chèn dữ liệu text từ người dùng, đồng thời tối ưu hiệu năng và dễ gắn event listeners.
 - **Q2: Logic tìm kiếm hoạt động như thế nào?**  
-  *Trả lời:* Sử dụng phương thức .filter() trên mảng services, chuyển chuỗi về chữ thường có dấu với .toLocaleLowerCase(vi) và dùng .includes() để so khớp với từ khóa người dùng nhập.
+  _Trả lời:_ Sử dụng phương thức .filter() trên mảng services, chuyển chuỗi về chữ thường có dấu với .toLocaleLowerCase(vi) và dùng .includes() để so khớp với từ khóa người dùng nhập.
 - **Q3: Cơ chế Responsive được xử lý ở đâu?**  
-  *Trả lời:* Xử lý trong css/style.css thông qua các media query @media (max-width: 860px) và @media (max-width: 640px). Khi vào màn hình điện thoại, Sidebar chuyển thành thanh ngang trên đầu hoặc thu gọn nhãn text chỉ giữ lại icon, bảng tự động có thanh cuộn ngang 	able-scroll để không vỡ bố cục.
+  _Trả lời:_ Xử lý trong css/style.css thông qua các media query @media (max-width: 860px) và @media (max-width: 640px). Khi vào màn hình điện thoại, Sidebar chuyển thành thanh ngang trên đầu hoặc thu gọn nhãn text chỉ giữ lại icon, bảng tự động có thanh cuộn ngang able-scroll để không vỡ bố cục.
